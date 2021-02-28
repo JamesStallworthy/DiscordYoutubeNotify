@@ -41,20 +41,21 @@ namespace DiscordYoutubeNotify.Services
             LoadFromDisk();
             await Task.Run(() =>
             {
-                CheckYoutube(pollRateInMins);
+                while (true)
+                {
+                    CheckYoutube();
+
+                    Task.Delay(TimeSpan.FromMinutes(pollRateInMins)).Wait();
+                }
             });
         }
 
-        private void CheckYoutube(int pollRateInMins) {
-            while (true)
+        private void CheckYoutube() 
+        {
+            for (int i = 0; i < channels.Count; i++)
             {
-                for (int i = 0; i < channels.Count; i++)
-                {
-                    if (CheckForNewVideo(channels[i], out string newVideoUrl))
-                        commandHandlingService.SendMessageAsync(channels[i].DiscordChannelId, newVideoUrl).Wait();
-                }
-
-                Task.Delay(TimeSpan.FromMinutes(pollRateInMins)).Wait();
+                if (CheckForNewVideo(channels[i], out string newVideoUrl))
+                    commandHandlingService.SendMessageAsync(channels[i].DiscordChannelId, newVideoUrl).Wait();
             }
         }
 
@@ -146,9 +147,12 @@ namespace DiscordYoutubeNotify.Services
         }
 
         private void LoadFromDisk() {
-            string input = File.ReadAllText(outputFile);
+            if (File.Exists(outputFile))
+            {
+                string input = File.ReadAllText(outputFile);
 
-            channels = JsonConvert.DeserializeObject<List<YoutubeChannel>>(input);
+                channels = JsonConvert.DeserializeObject<List<YoutubeChannel>>(input);
+            }
         }
     }
 }
