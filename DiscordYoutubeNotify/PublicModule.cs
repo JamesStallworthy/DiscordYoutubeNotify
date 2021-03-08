@@ -19,5 +19,18 @@ namespace DiscordYoutubeNotify
         {
             await youtubeMonitorService.AddNewChannel(channelName, Context.Channel.Id);
         }
+
+        [Command("DeleteChannel")]
+        [RequireContext(ContextType.Guild, ErrorMessage = "Sorry, this command must be ran from within a server, not a DM!")]
+        public async Task DeleteChannel([Remainder] string channelName) {
+            await youtubeMonitorService.DeleteChannel(channelName, Context.Channel.Id);
+        }
+
+        [Command("ListChannels")]
+        [RequireContext(ContextType.Guild, ErrorMessage = "Sorry, this command must be ran from within a server, not a DM!")]
+        public async Task ListChannels()
+        {
+            await youtubeMonitorService.ListChannels(Context.Channel.Id);
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Discord;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,6 +23,8 @@ namespace DiscordYoutubeNotify.Services
             public string LastVideoId { get; set; } = null;
         }
 
+        public event Func<LogMessage, Task> Log;
+
         private const string outputFile = "channels.json";
         List<YoutubeChannel> channels = new List<YoutubeChannel>();
 
@@ -43,50 +46,53 @@ namespace DiscordYoutubeNotify.Services
             {
                 while (true)
                 {
-                    CheckYoutube();
+                    CheckYoutube().Wait();
 
                     Task.Delay(TimeSpan.FromMinutes(pollRateInMins)).Wait();
                 }
             });
         }
 
-        private void CheckYoutube() 
+        private async Task CheckYoutube() 
         {
+            await Log(new LogMessage(LogSeverity.Info, "CheckYoutube", $"Checking for new youtube videos"));
             for (int i = 0; i < channels.Count; i++)
             {
-                if (CheckForNewVideo(channels[i], out string newVideoUrl))
-                    commandHandlingService.SendMessageAsync(channels[i].DiscordChannelId, newVideoUrl).Wait();
+                await CheckForNewVideo(channels[i]);
             }
         }
 
-        private bool CheckForNewVideo(YoutubeChannel youtubeChannel, out string newVideoUrl)
+        private async Task CheckForNewVideo(YoutubeChannel youtubeChannel)
         {
             HttpResponseMessage response;
             try
             {
                 response = httpClient.GetAsync(youtubeChannel.VideoUrl).Result;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Console.WriteLine($"Something went wrong when checking channel {youtubeChannel.Name}");
-                newVideoUrl = null;
-                return false;
+                await Log(new LogMessage(LogSeverity.Error, "CheckForNewVideo", $"Something went wrong when checking channel {youtubeChannel.Name}", ex));
+                return;
             }
 
             string body = response.Content.ReadAsStringAsync().Result;
 
             var match = videoRegex.Match(body);
 
-            if (youtubeChannel.LastVideoId != match.Groups[1].Value)
-            {
-                newVideoUrl = $"https://www.youtube.com/watch?v={match.Groups[1].Value}";
+            if (youtubeChannel.LastVideoId == null) {
                 youtubeChannel.LastVideoId = match.Groups[1].Value;
                 SaveToDisk();
-                return true;
+                return;
             }
-            else {
-                newVideoUrl = null;
-                return false;
+            else if (youtubeChannel.LastVideoId != match.Groups[1].Value)
+            {
+                string newVideoUrl = $"https://www.youtube.com/watch?v={match.Groups[1].Value}";
+                await Log(new LogMessage(LogSeverity.Info, "CheckForNewVideo", $"New Youtube video for: {youtubeChannel.Name}"));
+                if (await commandHandlingService.SendMessageAsync(youtubeChannel.DiscordChannelId, newVideoUrl)) {
+                    youtubeChannel.LastVideoId = match.Groups[1].Value;
+                    SaveToDisk();
+                }
+                return;
             }
         }
 
@@ -136,6 +142,28 @@ namespace DiscordYoutubeNotify.Services
 
             await commandHandlingService.SendMessageAsync(channelId, $"Added youtube channel: {successUrl}.");
             SaveToDisk();
+        }
+
+        internal async Task DeleteChannel(string channelName, ulong channelId)
+        {
+            if (channels.RemoveAll(x => x.Name == channelName && x.DiscordChannelId == channelId) > 0)
+            {
+                await commandHandlingService.SendMessageAsync(channelId, $"No longer following: {channelName}.");
+            }
+            else {
+                await commandHandlingService.SendMessageAsync(channelId, $"Not following {channelName} so was not removed.");
+            }
+            SaveToDisk();
+        }
+
+        internal async Task ListChannels(ulong channelId)
+        {
+            StringBuilder channelsText = new StringBuilder();
+            channelsText.AppendLine();
+
+            channels.ForEach(x => channelsText.AppendLine($"{x.Name} - {x.ChannelUrl}"));
+
+            await commandHandlingService.SendMessageAsync(channelId, $"The following channels are being followed:" + channelsText.ToString());
         }
 
         private void SaveToDisk() {

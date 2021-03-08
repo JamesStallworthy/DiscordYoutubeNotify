@@ -30,9 +30,13 @@ namespace DiscordYoutubeNotify
                 await client.LoginAsync(TokenType.Bot, _token);
                 await client.StartAsync();
 
-                await services.GetRequiredService<CommandHandlingService>().InitializeAsync();
+                var commandHandling = services.GetRequiredService<CommandHandlingService>();
+                commandHandling.Log += LogAsync;
+                await commandHandling.InitializeAsync();
 
-                await services.GetRequiredService<YoutubeMonitorService>().InitializeAsync(10);
+                var youtubeMonitor = services.GetRequiredService<YoutubeMonitorService>();
+                youtubeMonitor.Log += LogAsync;
+                await youtubeMonitor.InitializeAsync(10);
 
                 await Task.Delay(Timeout.Infinite);
             }

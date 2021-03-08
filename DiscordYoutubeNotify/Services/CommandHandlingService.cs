@@ -15,6 +15,7 @@ namespace DiscordYoutubeNotify.Services
         private readonly CommandService _commands;
         private readonly DiscordSocketClient _discord;
         private readonly IServiceProvider _services;
+        public event Func<LogMessage, Task> Log;
 
         public CommandHandlingService(IServiceProvider services)
         {
@@ -56,10 +57,20 @@ namespace DiscordYoutubeNotify.Services
             await context.Channel.SendMessageAsync($"error: {result}");
         }
 
-        public async Task SendMessageAsync(ulong channelId, string message) {
-            IMessageChannel channel = _discord.GetChannel(channelId) as IMessageChannel;
+        public async Task<bool> SendMessageAsync(ulong channelId, string message) {
+            try
+            {
+                IMessageChannel channel = _discord.GetChannel(channelId) as IMessageChannel;
+                await channel.SendMessageAsync(message);
 
-            await channel.SendMessageAsync(message);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                await Log(new LogMessage(LogSeverity.Error, "SendMessageAsync" , $"Couldn't send message to discord channel: {channelId}, Error message: ",ex));
+                return false;
+            }
+
         }
     }
 }
