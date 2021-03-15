@@ -25,13 +25,14 @@ namespace DiscordYoutubeNotify.Services
 
         public event Func<LogMessage, Task> Log;
 
-        private const string outputFile = "channels.json";
+        private const string configFolder = "Config";
+        private const string outputFile = "Config/channels.json";
         List<YoutubeChannel> channels = new List<YoutubeChannel>();
 
         public HttpClient httpClient { get; set; }
         public CommandHandlingService commandHandlingService { get; set; }
 
-        private Regex videoRegex = new Regex("{\"url\":\"/watch\\?v=([a-zA-Z0-9]*)\"");
+        private Regex videoRegex = new Regex("{\"url\":\"/watch\\?v=([a-zA-Z0-9\\-]*)\"");
 
         public YoutubeMonitorService(HttpClient _httpClient, CommandHandlingService _commandHandlingService)
         {
@@ -167,6 +168,9 @@ namespace DiscordYoutubeNotify.Services
         }
 
         private void SaveToDisk() {
+            if (!Directory.Exists(configFolder))
+                Directory.CreateDirectory(configFolder);
+
             string output = JsonConvert.SerializeObject(channels);
 
             using (StreamWriter writer = File.CreateText(outputFile)){

@@ -1,0 +1,8 @@
+﻿version: "3.3"
+services:
+  youtubenotify:
+    build: .
+    volumes:
+        - ./WorkingDir:/App/Config
+    env_file:
+        - env-vars.env
