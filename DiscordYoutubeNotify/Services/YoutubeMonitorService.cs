@@ -105,26 +105,21 @@ namespace DiscordYoutubeNotify.Services
 
             string successUrl = null;
 
-            string userUrl = $"https://www.youtube.com/user/{channelName}/";
-            string channelUrl = $"https://www.youtube.com/c/{channelName}/";
+            string[] channelUrlFormats = new string[] {
+                $"https://www.youtube.com/user/{channelName}/",
+                $"https://www.youtube.com/c/{channelName}/",
+                $"https://www.youtube.com/channel/{channelName}/"
+            };
 
             string videoUrl = null;
-            
-            HttpResponseMessage userResponse = await httpClient.GetAsync(userUrl);
 
-            if (userResponse.IsSuccessStatusCode)
+            foreach (var url in channelUrlFormats)
             {
-                videoUrl = $"https://www.youtube.com/user/{channelName}/videos";
-                successUrl = userUrl;
-            }
-            else
-            {
-                HttpResponseMessage channelResponse = await httpClient.GetAsync(channelUrl);
+                HttpResponseMessage response = await httpClient.GetAsync(url);
 
-                if (channelResponse.IsSuccessStatusCode)
-                {
-                    videoUrl = $"https://www.youtube.com/c/{channelName}/videos";
-                    successUrl = channelUrl;
+                if (response.IsSuccessStatusCode) {
+                    videoUrl = $"https://www.youtube.com/user/{channelName}/videos";
+                    successUrl = url;
                 }
             }
 
