@@ -32,7 +32,7 @@ namespace DiscordYoutubeNotify.Services
         public HttpClient httpClient { get; set; }
         public CommandHandlingService commandHandlingService { get; set; }
 
-        private Regex videoRegex = new Regex("{\"url\":\"/watch\\?v=([a-zA-Z0-9\\-]*)\"");
+        private Regex videoRegex = new Regex("{\"url\":\"/watch\\?v=([a-zA-Z0-9\\-_]*)\"");
 
         public YoutubeMonitorService(HttpClient _httpClient, CommandHandlingService _commandHandlingService)
         {
