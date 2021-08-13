@@ -32,7 +32,7 @@ namespace DiscordYoutubeNotify.Services
         public HttpClient httpClient { get; set; }
         public CommandHandlingService commandHandlingService { get; set; }
 
-        private Regex videoRegex = new Regex("{\"url\":\"/watch\\?v=([a-zA-Z0-9\\-_]*)\"");
+        private Regex videoRegex = new Regex(@"{""url"":""\/watch\?v=([a-zA-Z0-9\\-_]+)""");
 
         public YoutubeMonitorService(HttpClient _httpClient, CommandHandlingService _commandHandlingService)
         {
@@ -79,6 +79,11 @@ namespace DiscordYoutubeNotify.Services
             string body = response.Content.ReadAsStringAsync().Result;
 
             var match = videoRegex.Match(body);
+
+            var newVideoId = match.Groups[1].Value;
+
+            if (string.IsNullOrEmpty(newVideoId))
+                return;
 
             if (youtubeChannel.LastVideoId == null) {
                 youtubeChannel.LastVideoId = match.Groups[1].Value;

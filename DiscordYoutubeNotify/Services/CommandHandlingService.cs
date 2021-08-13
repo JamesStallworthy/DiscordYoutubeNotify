@@ -67,10 +67,9 @@ namespace DiscordYoutubeNotify.Services
             }
             catch (Exception ex)
             {
-                await Log(new LogMessage(LogSeverity.Error, "SendMessageAsync" , $"Couldn't send message to discord channel: {channelId}, Error message: ",ex));
+                await Log(new LogMessage(LogSeverity.Error, "SendMessageAsync", $"Couldn't send message to discord channel: {channelId}, Error message: ", ex));
                 return false;
             }
-
         }
     }
 }
