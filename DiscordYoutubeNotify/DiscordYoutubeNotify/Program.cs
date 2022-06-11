@@ -28,6 +28,7 @@ namespace DiscordYoutubeNotify
                     {
                         GatewayIntents = GatewayIntents.AllUnprivileged,
                         AlwaysDownloadUsers = true,
+                        UseInteractionSnowflakeDate = false //Fix issue with time sync with Interactions
                     });
                     services.AddSingleton<DiscordSocketClient>();
                     services.AddSingleton<InteractionsModule>();
