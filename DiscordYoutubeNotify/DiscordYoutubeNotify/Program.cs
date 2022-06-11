@@ -49,7 +49,6 @@ namespace DiscordYoutubeNotify
                     logging.SetMinimumLevel(LogLevel.Debug);
                     logging.ClearProviders();
                     logging.AddSimpleConsole(options => options.IncludeScopes = true);
-                    logging.AddEventLog();
                 });
         }
     }
