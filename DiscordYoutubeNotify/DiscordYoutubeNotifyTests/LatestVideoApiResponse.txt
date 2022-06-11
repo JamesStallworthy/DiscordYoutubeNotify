@@ -1,0 +1,20 @@
+﻿{
+  "kind": "youtube#playlistItemListResponse",
+  "etag": "c8-0ydhvL6Zr3jGsT62LUAzlk8o",
+  "nextPageToken": "EAAaBlBUOkNBRQ",
+  "items": [
+    {
+      "kind": "youtube#playlistItem",
+      "etag": "HWP9YD0qmMMzO9r66BuLWYHTmvs",
+      "id": "VVVmWndOZDhpN3NwSm1McjRxcTFfR3l3LmVBSXVsUU9UREhJ",
+      "contentDetails": {
+        "videoId": "eAIulQOTDHI",
+        "videoPublishedAt": "2022-06-05T16:35:58Z"
+      }
+    }
+  ],
+  "pageInfo": {
+    "totalResults": 300,
+    "resultsPerPage": 1
+  }
+}

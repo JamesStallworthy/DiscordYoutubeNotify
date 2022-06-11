@@ -1,0 +1,39 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiscordYoutubeNotify", "DiscordYoutubeNotify\DiscordYoutubeNotify.csproj", "{64F63D8D-24B2-46A6-A5F2-A1B5073AAF9A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscordYoutubeNotifyTests", "DiscordYoutubeNotifyTests\DiscordYoutubeNotifyTests.csproj", "{D677BCB3-611D-4C19-92D5-EE3B178F5219}"
+	ProjectSection(ProjectDependencies) = postProject
+		{64F63D8D-24B2-46A6-A5F2-A1B5073AAF9A} = {64F63D8D-24B2-46A6-A5F2-A1B5073AAF9A}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9C62283F-923E-424E-A8F8-EC7CE5C22B14}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{64F63D8D-24B2-46A6-A5F2-A1B5073AAF9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{64F63D8D-24B2-46A6-A5F2-A1B5073AAF9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{64F63D8D-24B2-46A6-A5F2-A1B5073AAF9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{64F63D8D-24B2-46A6-A5F2-A1B5073AAF9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D677BCB3-611D-4C19-92D5-EE3B178F5219}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D677BCB3-611D-4C19-92D5-EE3B178F5219}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D677BCB3-611D-4C19-92D5-EE3B178F5219}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D677BCB3-611D-4C19-92D5-EE3B178F5219}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2745E57F-870E-4270-8A8B-EB521AF224BD}
+	EndGlobalSection
+EndGlobal
