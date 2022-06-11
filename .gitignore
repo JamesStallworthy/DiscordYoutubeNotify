@@ -339,3 +339,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/DiscordYoutubeNotify/DiscordYoutubeNotify/Properties/launchSettings.json
+/DiscordYoutubeNotify/DiscordYoutubeNotify/YoutubeNotify.db
+*.editorconfig
