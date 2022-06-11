@@ -83,7 +83,7 @@ namespace DiscordYoutubeNotify
 #if DEBUG
             await _interactionService.RegisterCommandsToGuildAsync(815284605208231937, true);
 #else
-            await _handler.RegisterCommandsGloballyAsync(true);
+            await _interactionService.RegisterCommandsGloballyAsync(true);
 #endif
         }
 

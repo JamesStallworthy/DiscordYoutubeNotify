@@ -5,10 +5,9 @@ WORKDIR /app
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["DiscordYoutubeNotify/DiscordYoutubeNotify.csproj", "DiscordYoutubeNotify/"]
+COPY ["./DiscordYoutubeNotify.csproj", "DiscordYoutubeNotify/"]
 RUN dotnet restore "DiscordYoutubeNotify/DiscordYoutubeNotify.csproj"
-COPY . .
-WORKDIR "/src/DiscordYoutubeNotify"
+COPY . ./
 RUN dotnet build "DiscordYoutubeNotify.csproj" -c Release -o /app/build
 
 FROM build AS publish
