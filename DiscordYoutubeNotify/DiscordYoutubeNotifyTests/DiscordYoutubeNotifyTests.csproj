@@ -22,6 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="ChannelApiResponse.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="ChannelHomepage.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

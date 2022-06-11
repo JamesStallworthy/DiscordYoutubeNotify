@@ -12,7 +12,9 @@ namespace DiscordYoutubeNotify
     {
         public string APIKey;
 
-        private string GetLatestVideo = "https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=1&playlistId={0}&key={1}]";
+        private string GetLatestVideo = "https://youtube.googleapis.com/youtube/v3/playlistItems?part=contentDetails&maxResults=1&playlistId={0}&key={1}";
+
+        private string GetChannelInfo = "https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id={0}&key={1}";
 
         private readonly HttpClient _httpClient;
 
@@ -62,6 +64,23 @@ namespace DiscordYoutubeNotify
                 throw new Exception("Failed to retrieve latest video");
         }
 
+        public async Task<string> GetChannelName(string channelID)
+        {
+            string builtUrl = string.Format(GetChannelInfo, channelID, APIKey);
+
+            var response = await _httpClient.GetAsync(builtUrl);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            var json = JsonConvert.DeserializeObject<ChannelItemsJson>(content);
+
+            if (json != null)
+                return json.items[0].snippet.title;
+            else
+                throw new Exception("Failed to retrieve latest video");
+        }
+
+        #region PlaylistJsonModel
         private class PlaylistItemsJson {
             public List<PlaylistItem> items { get; set; }
         }
@@ -75,5 +94,23 @@ namespace DiscordYoutubeNotify
             public string videoId { get; set; }
             
         }
+        #endregion
+
+        #region ChannelJsonModel
+        private class ChannelItemsJson
+        {
+            public List<ChannelItems> items { get; set; }
+        }
+
+        private class ChannelItems
+        {
+            public ChannelSnippet snippet { get; set; }
+        }
+
+        private class ChannelSnippet
+        {
+            public string title { get; set; }
+        }
+        #endregion
     }
 }

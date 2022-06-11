@@ -12,8 +12,11 @@ namespace DiscordYoutubeNotifyTests
         {
             var mockHttp = new MockHttpMessageHandler();
 
-            mockHttp.When("https://youtube.googleapis.com/youtube/v3/*")
+            mockHttp.When("https://youtube.googleapis.com/youtube/v3/playlistItems*")
                     .Respond("application/json", File.ReadAllText("./LatestVideoApiResponse.txt"));
+
+            mockHttp.When("https://youtube.googleapis.com/youtube/v3/channels*")
+                .Respond("application/json", File.ReadAllText("./ChannelApiResponse.txt"));
 
             mockHttp.When("https://www.youtube.com/c/UKDashCameras").
                 Respond("text/html", File.ReadAllText("./ChannelHomepage.txt"));
@@ -64,6 +67,14 @@ namespace DiscordYoutubeNotifyTests
             var id = await _service.GetLatestVideoId("UCfZwNd8i7spJmLr4qq1_Gyw");
             Assert.That(id, Is.EqualTo("eAIulQOTDHI"));
         }
+
+        [Test]
+        public async Task GetChannelName()
+        {
+            var id = await _service.GetChannelName("UCfZwNd8i7spJmLr4qq1_Gyw");
+            Assert.That(id, Is.EqualTo("Google Developers"));
+        }
+
 
         [Test]
         public void GetPlaylistId()

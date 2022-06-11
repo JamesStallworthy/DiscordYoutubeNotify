@@ -30,10 +30,25 @@ namespace DiscordYoutubeNotify
             _logger = logger;
         }
 
+        public async Task<List<Channel>> GetAllSubscribedToChannels(string discordChannelId) 
+        {
+            return await _channelRepository.GetChannelForDiscordChannelId(discordChannelId);
+        }
+
+        public async Task UnsubsribeFromChannel(string channelId, string discordChannelId) {
+            var subscription = await _subscriptionRepository.Get(channelId, discordChannelId);
+
+            if (subscription == null)
+                return;
+
+            await _subscriptionRepository.Delete(subscription.Id);
+        }
+
         public async Task<AddChannelStatus> AddChannel(string channelUrl, string discordChannelId) {
             try
             {
                 string channelId = await _youtubeAPIService.GetChannelID(channelUrl);
+                string channelName = await _youtubeAPIService.GetChannelName(channelId);
 
                 Channel channel = await _channelRepository.GetChannelWithChannelId(channelId);
 
@@ -42,7 +57,7 @@ namespace DiscordYoutubeNotify
                     channel = await _channelRepository.Add(new Channel()
                     {
                         ChannelId = channelId,
-                        ChannelName = "TODO Need to Add",
+                        ChannelName = channelName,
                         LatestVideoId = null,
                         Subscriptions = new List<Subscription>() {
                         new Subscription(){

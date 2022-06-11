@@ -30,12 +30,14 @@ namespace DiscordYoutubeNotify
                         AlwaysDownloadUsers = true,
                     });
                     services.AddSingleton<DiscordSocketClient>();
-                    services.AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()));
                     services.AddSingleton<InteractionsModule>();
+                    services.AddSingleton<InteractionService>();
+                    services.AddSingleton<MessagesService>();
 
                     services.AddSingleton<UploadCheckerService>();
                     services.AddSingleton<SubscriptionManagmentService>();
                     services.AddSingleton<YoutubeAPIService>();
+                    services.AddSingleton<UploadCheckerService>();
 
                     services.AddScoped<HttpClient>();
 

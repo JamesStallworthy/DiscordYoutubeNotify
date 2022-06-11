@@ -22,5 +22,18 @@ namespace DiscordYoutubeNotify.EfCore
                 .Include(x => x.Subscriptions)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<List<Channel>> GetChannelForDiscordChannelId(string discrodChannelId)
+        {
+            return await context.Set<Channel>()
+                .Include(x => x.Subscriptions)
+                .Where(x => x.Subscriptions.Where(x => x.DiscordChannelId == discrodChannelId).Count() > 0)
+                .ToListAsync();
+        }
+
+        public override async Task<List<Channel>> GetAll()
+        {
+            return await context.Set<Channel>().Include(x => x.Subscriptions).ToListAsync();
+        }
     }
 }

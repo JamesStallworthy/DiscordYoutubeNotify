@@ -19,16 +19,22 @@ namespace DiscordYoutubeNotify
 
         private readonly DiscordSocketClient _client;
         private readonly InteractionService _interactionService;
+        private readonly UploadCheckerService _uploadCheckerService;
+        private readonly SubscriptionManagmentService _subscriptionManagmentService;
+
         private readonly IServiceProvider _services;
 
         public YoutubeNotifyHostedService(ILogger<YoutubeNotifyHostedService> logger, ILogger<DiscordSocketClient> loggerDiscordSocketClient,
-            DiscordSocketClient discordSocketClient, InteractionService interactionService, IServiceProvider services)
+            DiscordSocketClient discordSocketClient, InteractionService interactionService, UploadCheckerService uploadCheckerService, SubscriptionManagmentService subscriptionManagmentService, 
+            IServiceProvider services)
         {
             _logger = logger;
             _loggerDiscordSocketClient = loggerDiscordSocketClient;
             _client = discordSocketClient;
             _interactionService = interactionService;
             _services = services;
+            _uploadCheckerService = uploadCheckerService;
+            _subscriptionManagmentService = subscriptionManagmentService;
         }
 
         public async Task StartAsync(CancellationToken cancellationToken)
@@ -47,13 +53,21 @@ namespace DiscordYoutubeNotify
             await _interactionService.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
             _client.InteractionCreated += HandleInteraction;
+            _client.SelectMenuExecuted += HandleSelectMenu;
 
-            //var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+            string pollrateStr = Environment.GetEnvironmentVariable("youtube_pollrate");
+            double pollrate;
+            if (pollrateStr != null)
+                pollrate = double.Parse(pollrateStr);
+            else
+                pollrate = 10;
 
-            //while (await timer.WaitForNextTickAsync())
-            //{
-            //    //Refresh the youtube api
-            //}
+            var timer = new PeriodicTimer(TimeSpan.FromMinutes(pollrate));
+
+            while (await timer.WaitForNextTickAsync())
+            {
+                await _uploadCheckerService.PollChannels();
+            }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
@@ -71,6 +85,20 @@ namespace DiscordYoutubeNotify
 #else
             await _handler.RegisterCommandsGloballyAsync(true);
 #endif
+        }
+
+        //TODO pass this to a seperate service to handle nicely
+        //Its okay for now as we only have one SelectMenu to handle
+        private async Task HandleSelectMenu(SocketMessageComponent socketMessageComponent) {
+            if (socketMessageComponent.Data.CustomId == "unsub-select") {
+                if (socketMessageComponent.Data.Values.Count > 0)
+                {
+                    var channelId = socketMessageComponent.Data.Values.ElementAt(0);
+                    await _subscriptionManagmentService.UnsubsribeFromChannel(channelId, socketMessageComponent.ChannelId.ToString());
+
+                    await socketMessageComponent.RespondAsync("Sucessfully unsubscribed");
+                }
+            }
         }
 
         private async Task HandleInteraction(SocketInteraction interaction)

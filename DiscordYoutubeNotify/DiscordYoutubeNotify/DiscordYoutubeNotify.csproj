@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <None Update="YoutubeNotify.db">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
