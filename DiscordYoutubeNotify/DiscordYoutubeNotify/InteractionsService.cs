@@ -36,12 +36,12 @@ namespace DiscordYoutubeNotify
         [SlashCommand("showall", "Show all subscribed to channels")]
         public async Task ShowAll()
         {
-            var channels = await _subscriptionManagmentService.GetAllSubscribedToChannels(Context.Channel.Id.ToString());
+            List<Models.Channel> channels = await _subscriptionManagmentService.GetAllSubscribedToChannels(Context.Channel.Id.ToString());
 
             if (channels.Count == 0)
                 await RespondAsync("The channel has no subscriptions");
 
-            await RespondAsync(string.Join("\r\n", channels));
+            await RespondAsync(string.Join("\r\n", channels.Select(x => x.ChannelName)));
         }
 
         [SlashCommand("unsubscribe", "Select a channel to unsubscribe from")]
