@@ -12,6 +12,18 @@ namespace DiscordYoutubeNotify
     {
         public static void Main(string[] args)
         {
+            //Move the database to the DataFolder if it doesn't already exist
+            //This is a temporary....
+
+            //Final DB File Location
+            string finalDbLocation = Path.GetFullPath("./Data/YoutubeNotify.db");
+
+            if (!Directory.Exists(Path.GetDirectoryName(finalDbLocation)))
+                Directory.CreateDirectory(Path.GetDirectoryName(finalDbLocation));
+
+            if (!File.Exists(finalDbLocation))
+                File.Copy("./YoutubeNotify.db", finalDbLocation);
+
             CreateHostBuilder(args).Build().Run();
         }
 

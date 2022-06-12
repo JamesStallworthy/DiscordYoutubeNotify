@@ -13,11 +13,11 @@ namespace DiscordYoutubeNotify.EfCore
         public DbSet<Channel> Channels { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
 
-        public string DbPath { get; } = "./YoutubeNotify.db";
+        public string DbPath { get; } = "./Data/YoutubeNotify.db";
 
         public YoutubeNotifyDbContext()
         {
-            DbPath = "./YoutubeNotify.db";
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
